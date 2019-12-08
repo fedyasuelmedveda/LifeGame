@@ -1,0 +1,31 @@
+#coding: utf-8
+import math
+import tkinter
+import time
+
+mass1 = (100)(100)#текущее поколение
+mass2 = (100)(100)#новое поколение
+lifeScale = 1 #масштаб
+lifeSpeed = 100 #скорость
+ifTime = 0 #остановка времени 0-если время стоит
+def Update():
+    {
+        #считаем mass2
+    }
+def Output(scale):
+    {
+        #выводим mass2 в соответсвие с масштабом scale
+    }
+def CheckButtons():
+    {
+
+    }
+
+if ifTime:
+    while 1:
+        time.sleep(lifeSpeed)
+        Update()
+
+        CheckButtons()
+        Output(lifeScale)
+        mass1 = mass2
