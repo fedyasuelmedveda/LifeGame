@@ -1,22 +1,26 @@
 #coding: utf-8
 import math
-import tkinter
+import tkinter as tk
 import time
+
 n = 100
 m = 100
+#заполняем 0-ми массивы
 mass1 = [[0 for j in range(m)] for i in range(n)]
 mass2 = [[0 for j in range(m)] for j in range(m)]
 
 #ifTime =1
 def Start():
-    global lifeScale,lifeSpeed,ifTime,generationCounter
-    #заполняем 0-ми массивы
-
-
-    lifeScale = 1 #масштаб
+    global root,lifeScale,lifeSpeed,ifTime,generationCounter
+    root = tk.Tk()
+    ScaleX = 400
+    ScaleY = 400
+    root.geometry('400x400')
+    lifeScale = 4 #масштаб
     lifeSpeed = 1 #скорость
-    ifTime = 1 #остановка времени 0-если время стоит
+    ifTime = 0 #остановка времени 0-если время стоит
     generationCounter = 0
+
 def Update():
     for i in range(n):
         for j in range(m):
@@ -53,27 +57,35 @@ def Update():
                     mass2[i][j] = 1
                 else:
                     mass2[i][j] = 0
+    generationCounter += 1
 
 def Output(scale):
     {
         #выводим mass2 в соответсвие с масштабом scale
     }
+def MouceClick(event):
+    x = math.floor(event.x / lifeScale)
+    y = math.floor(event.y / lifeScale)
+    print(x,y)
+    mass2[x][y] = (mass2[x][y] + 1) % 2
+
 def CheckButtons():
     {
+        root.bind('<1>',MouceClick)
 
     }
+
 #старт
 
 Start()
 
+#time.sleep(lifeSpeed)
+print(generationCounter)
 if ifTime:
-    while 1:
+    Update()
+CheckButtons()
+Output(lifeScale)
+mass1 = mass2
 
-        time.sleep(lifeSpeed)
-        print(generationCounter)
-        Update()
-        CheckButtons()
-        Output(lifeScale)
-        mass1 = mass2
-        generationCounter+=1
+root.mainloop()
         #print(generationCounter)
