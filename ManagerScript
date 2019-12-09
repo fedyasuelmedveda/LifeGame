@@ -24,7 +24,7 @@ mass1 = [[0 for j in range(m)] for i in range(n)]
 mass2 = [[0 for j in range(m)] for j in range(n)]
 
 def CellUpdate():
-    global n,m
+    global n,m,generationCounter
     for i in range(n):
         for j in range(m):
 
@@ -32,23 +32,24 @@ def CellUpdate():
             neidgboursAlive=0
 
             #считаем живых соседей
-            if (mass1[(n + i - 1) % n][j] == 1):
+            if mass1[(n + i - 1) % n][j] == 1:
                 neidgboursAlive+=1
-            if (mass1[(n + i + 1) % n][j] == 1):
+            if mass1[(n + i + 1) % n][j] == 1:
                 neidgboursAlive += 1
-            if (mass1[(n + i - 1) % n][(n + j - 1) % n] == 1):
+            if mass1[(n + i - 1) % n][(m + j - 1) % m] == 1:
                 neidgboursAlive += 1
-            if (mass1[(n + i - 1) % n][(n + j + 1) % n] == 1):
+            if mass1[(n + i - 1) % n][(m + j + 1) % m] == 1:
                 neidgboursAlive += 1
-            if (mass1[(n + i + 1) % n][(n + j - 1) % n] == 1):
+            if mass1[(n + i + 1) % n][(m + j - 1) % m] == 1:
                 neidgboursAlive += 1
-            if (mass1[(n + i + 1) % n][(n + j + 1) % n] == 1):
+            if mass1[(n + i + 1) % n][(m + j + 1) % m] == 1:
                 neidgboursAlive += 1
-            if (mass1[i][(n + j - 1) % n] == 1):
+            if mass1[i][(m + j - 1) % m] == 1:
                 neidgboursAlive += 1
-            if (mass1[i][(n + j + 1) % n] == 1):
+            if mass1[i][(m + j + 1) % m] == 1:
                 neidgboursAlive += 1
-
+            if neidgboursAlive>0:
+                print(neidgboursAlive)
             #считаем следующее поколение в соответствии с правилами
             if cell == 1:
                 if neidgboursAlive == 2 or neidgboursAlive == 3 :
@@ -58,8 +59,10 @@ def CellUpdate():
             else:
                 if neidgboursAlive == 3:
                     mass2[i][j] = 1
+                    print("hello world")
                 else:
                     mass2[i][j] = 0
+
     generationCounter += 1
 
 def Filling():
@@ -89,7 +92,7 @@ def CheckButtons():
 
 def Update():
     global generationCounter, ifTime, mass2, mass1
-    print(generationCounter)
+#    print(generationCounter)
     if ifTime:
         CellUpdate()
     CheckButtons()
@@ -114,7 +117,6 @@ def Start():
     mass2 = [[0 for j in range(m)] for j in range(n)]
     print(lifeScale) #масштаб
     print(lifeSpeed) #скорость
-
     ifTime = 0 #остановка времени 0-если время стоит
     generationCounter = 0
     Update()
@@ -148,15 +150,3 @@ menubar.add_command(label="Play",command=Start)
 # display the menu
 rootMenu.config(menu=menubar)
 rootMenu.mainloop()
-
-
-
-
-
-
-
-#старт
-
-
-
-
