@@ -3,64 +3,28 @@ import math
 import tkinter as tk
 import time
 
-n = 100
-m = 100
-#заполняем 0-ми массивы
-mass1 = [[0 for j in range(m)] for i in range(n)]
-mass2 = [[0 for j in range(m)] for j in range(m)]
+
 #menu
+
 from tkinter import *
-root = Tk()
+rootMenu = Tk()
 #commands нужно добавить другие
+
 def Scale(n):
     global lifeScale
     lifeScale = n
+
 def Speed(n):
     global lifeSpeed
     lifeSpeed = n
 
-
-menubar = Menu(root)
-
-#General
-filemenu = Menu(menubar, tearoff=0)
-#filemenu.add_command(label="Open", command=hello)
-#filemenu.add_command(label="Save", command=hello)
-#filemenu.add_separator()
-filemenu.add_command(label="Exit", command=root.quit)
-menubar.add_cascade(label="File", menu=filemenu)
-#lifeScale
-editmenu = Menu(menubar, tearoff=0)
-editmenu.add_command(label="3", command=Scale(3))
-editmenu.add_command(label="4", command=Scale(4))
-editmenu.add_command(label="5", command=Scale(5))
-menubar.add_cascade(label="lifeScale", menu=editmenu)
-#lifeSpeed
-editmenu = Menu(menubar, tearoff=0)
-editmenu.add_command(label="1", command=Speed(1))
-editmenu.add_command(label="2", command=Speed(2))
-editmenu.add_command(label="3", command=Speed(3))
-menubar.add_cascade(label="lifeSpeed", menu=editmenu)
-
-# display the menu
-root.config(menu=menubar)
-
-def Start():
-    global root,canv,lifeScale,lifeSpeed,ifTime,generationCounter
-    root = tk.Tk()
-    #fr = tk.Frame(root)
-    lifeScale = 100
-    s = str(lifeScale * 10) + "x" + str(lifeScale * 10)
-    root.geometry(s)
-    canv = tk.Canvas(root, bg='pink')
-    canv.pack(fill=tk.BOTH, expand=1)
-     #масштаб
-    lifeSpeed = 1 #скорость
-
-    ifTime = 0 #остановка времени 0-если время стоит
-    generationCounter = 0
+n = 0
+m = 0
+mass1 = [[0 for j in range(m)] for i in range(n)]
+mass2 = [[0 for j in range(m)] for j in range(n)]
 
 def CellUpdate():
+    global n,m
     for i in range(n):
         for j in range(m):
 
@@ -98,10 +62,14 @@ def CellUpdate():
                     mass2[i][j] = 0
     generationCounter += 1
 
-def Output(scale):
-    {
-        #выводим mass2 в соответсвие с масштабом scale
-    }
+def Filling():
+    for j in range(0, m):
+        for i in range(0, n):
+            if mass2[i][j] == 0:
+                canv.create_rectangle(i * 10, j * 10, (i + 1) * 10, (j + 1) * 10, fill='Black', outline='Pink')
+            else:
+                canv.create_rectangle(i * 10, j * 10, (i + 1) * 10, (j + 1) * 10, fill='White', outline='Pink')
+
 #перекрашиваем клетку на которую тыкнули
 def MouceClick(event):
     x = math.floor(event.x / 10)
@@ -109,24 +77,86 @@ def MouceClick(event):
     print(x,y)
     mass2[x][y] = (mass2[x][y] + 1) % 2
 
-def CheckButtons():
-    {
-        root.bind('<1>',MouceClick)
+def TimeShift(event):
+    global ifTime
+    ifTime = (ifTime + 1) % 2
+    print(ifTime)
 
-    }
+def CheckButtons():
+    global root
+    root.bind('<1>',MouceClick)
+    root.bind('<space>',TimeShift)
+
 def Update():
     global generationCounter, ifTime, mass2, mass1
     print(generationCounter)
     if ifTime:
         CellUpdate()
     CheckButtons()
-    Output(lifeScale)
+    Filling()
     mass1 = mass2
+    root.after(100,Update)
+
+def Start():
+    global root,canv,lifeScale,lifeSpeed,ifTime,generationCounter,n,m,mass1,mass2
+    root = tk.Tk()
+    #fr = tk.Frame(root)
+    n = math.floor(lifeScale)
+    m = math.floor(lifeScale * 3 / 4)
+    s = str(n * 10) + "x" + str(m * 10)
+    root.geometry(s)
+    canv = tk.Canvas(root, bg='pink')
+    canv.pack(fill=tk.BOTH, expand=1)
+
+    # заполняем 0-ми массивы
+
+    mass1 = [[0 for j in range(m)] for i in range(n)]
+    mass2 = [[0 for j in range(m)] for j in range(n)]
+    print(lifeScale) #масштаб
+    print(lifeSpeed) #скорость
+
+    ifTime = 0 #остановка времени 0-если время стоит
+    generationCounter = 0
+    Update()
+    root.mainloop()
+
+
+menubar = Menu(rootMenu)
+
+#General
+filemenu = Menu(menubar, tearoff=0)
+#filemenu.add_command(label="Open", command=hello)
+#filemenu.add_command(label="Save", command=hello)
+#filemenu.add_separator()
+filemenu.add_command(label="Exit", command=rootMenu.quit)
+menubar.add_cascade(label="File", menu=filemenu)
+#lifeScale
+editmenu = Menu(menubar, tearoff=0)
+editmenu.add_command(label="200", command=Scale(200))
+editmenu.add_command(label="100", command=Scale(100))
+editmenu.add_command(label="50", command=Scale(50))
+menubar.add_cascade(label="lifeScale", menu=editmenu)
+#lifeSpeed
+editmenu = Menu(menubar, tearoff=0)
+editmenu.add_command(label="1", command=Speed(1))
+editmenu.add_command(label="2", command=Speed(2))
+editmenu.add_command(label="3", command=Speed(3))
+menubar.add_cascade(label="lifeSpeed", menu=editmenu)
+#Play
+editmenu = Menu(menubar, tearoff=5)
+menubar.add_command(label="Play",command=Start)
+# display the menu
+rootMenu.config(menu=menubar)
+rootMenu.mainloop()
+
+
+
+
+
+
 
 #старт
 
 
 
-#root.after(1000,Update)
-root.mainloop()
-        #print(generationCounter)
+
