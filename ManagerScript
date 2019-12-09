@@ -2,16 +2,58 @@
 import math
 import tkinter
 import time
+n = 100
+m = 100
+mass1 = [[0 for j in range(m)] for i in range(n)]
+mass2 = [[0 for j in range(m)] for j in range(m)]
 
-mass1 = (100)(100)#текущее поколение
-mass2 = (100)(100)#новое поколение
-lifeScale = 1 #масштаб
-lifeSpeed = 100 #скорость
-ifTime = 0 #остановка времени 0-если время стоит
+#ifTime =1
+def Start():
+    global lifeScale,lifeSpeed,ifTime,generationCounter
+    #заполняем 0-ми массивы
+
+
+    lifeScale = 1 #масштаб
+    lifeSpeed = 1 #скорость
+    ifTime = 1 #остановка времени 0-если время стоит
+    generationCounter = 0
 def Update():
-    {
-        #считаем mass2
-    }
+    for i in range(n):
+        for j in range(m):
+
+            cell = mass1[i][j]
+            neidgboursAlive=0
+
+            #считаем живых соседей
+            if (mass1[(n + i - 1) % n][j] == 1):
+                neidgboursAlive+=1
+            if (mass1[(n + i + 1) % n][j] == 1):
+                neidgboursAlive += 1
+            if (mass1[(n + i - 1) % n][(n + j - 1) % n] == 1):
+                neidgboursAlive += 1
+            if (mass1[(n + i - 1) % n][(n + j + 1) % n] == 1):
+                neidgboursAlive += 1
+            if (mass1[(n + i + 1) % n][(n + j - 1) % n] == 1):
+                neidgboursAlive += 1
+            if (mass1[(n + i + 1) % n][(n + j + 1) % n] == 1):
+                neidgboursAlive += 1
+            if (mass1[i][(n + j - 1) % n] == 1):
+                neidgboursAlive += 1
+            if (mass1[i][(n + j + 1) % n] == 1):
+                neidgboursAlive += 1
+
+            #считаем следующее поколение в соответствии с правилами
+            if cell == 1:
+                if neidgboursAlive == 2 or neidgboursAlive == 3 :
+                    mass2[i][j] = 1
+                else:
+                    mass2[i][j] = 0
+            else:
+                if neidgboursAlive == 3:
+                    mass2[i][j] = 1
+                else:
+                    mass2[i][j] = 0
+
 def Output(scale):
     {
         #выводим mass2 в соответсвие с масштабом scale
@@ -20,12 +62,18 @@ def CheckButtons():
     {
 
     }
+#старт
+
+Start()
 
 if ifTime:
     while 1:
-        time.sleep(lifeSpeed)
-        Update()
 
+        time.sleep(lifeSpeed)
+        print(generationCounter)
+        Update()
         CheckButtons()
         Output(lifeScale)
         mass1 = mass2
+        generationCounter+=1
+        #print(generationCounter)
