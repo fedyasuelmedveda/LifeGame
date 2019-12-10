@@ -9,14 +9,46 @@ import time
 from tkinter import *
 rootMenu = Tk()
 #commands нужно добавить другие
+lifeScale = 0
+lifeSpeed = 0
+cellSize = 10
 
-def Scale(n):
+def cellSize10():
+    global cellSize
+    cellSize = 10
+
+def cellSize15():
+    global cellSize
+    cellSize = 15
+
+def cellSize20():
+    global cellSize
+    cellSize = 20
+
+
+def Scale200():
     global lifeScale
-    lifeScale = n
+    lifeScale = 200
 
-def Speed(n):
+def Scale100():
+    global lifeScale
+    lifeScale = 100
+
+def Scale50():
+    global lifeScale
+    lifeScale = 50
+
+def Speed1():
     global lifeSpeed
-    lifeSpeed = n
+    lifeSpeed = 1
+
+def Speed2():
+    global lifeSpeed
+    lifeSpeed = 5
+
+def Speed3():
+    global lifeSpeed
+    lifeSpeed = 10
 
 n = 0
 m = 0
@@ -84,25 +116,25 @@ def CellUpdate():
             else:
                 if neidgboursAlive == 3:
                     mass2[i][j] = 1
-                    print("hello world")
                 else:
                     mass2[i][j] = 0
 
     generationCounter += 1
 
 def Filling():
+    global cellSize
     for j in range(0, m):
         for i in range(0, n):
             if mass2[i][j] == 0:
-                canv.create_rectangle(i * 10, j * 10, (i + 1) * 10, (j + 1) * 10, fill='Black', outline='Pink')
+                canv.create_rectangle(i * cellSize, j * cellSize, (i + 1) * cellSize, (j + 1) * cellSize, fill='Black', outline='Pink')
             else:
-                canv.create_rectangle(i * 10, j * 10, (i + 1) * 10, (j + 1) * 10, fill='White', outline='Pink')
+                canv.create_rectangle(i * cellSize, j * cellSize, (i + 1) * cellSize, (j + 1) * cellSize, fill='White', outline='Pink')
 
 #перекрашиваем клетку на которую тыкнули
 def MouceClick(event):
-    global mass2
-    x = math.floor(event.x / 10)
-    y = math.floor(event.y / 10)
+    global mass2,cellSize
+    x = math.floor(event.x / cellSize)
+    y = math.floor(event.y / cellSize)
     print(x,y)
     mass2[x][y] = (mass2[x][y] + 1) % 2
 
@@ -123,22 +155,22 @@ def MassEqual():
             mass1[i][j] = mass2[i][j]
 
 def Update():
-    global generationCounter, ifTime, mass2, mass1
+    global generationCounter, ifTime, mass2, mass1,lifeSpeed
 #    print(generationCounter)
     CheckButtons()
     if ifTime:
         CellUpdate()
     Filling()
     MassEqual()
-    root.after(100,Update)
+    root.after(1,Update)
 
 def Start():
-    global root,canv,lifeScale,lifeSpeed,ifTime,generationCounter,n,m,mass1,mass2
+    global root,canv,lifeScale,ifTime,generationCounter,n,m,mass1,mass2,cellSize
     root = tk.Tk()
     #fr = tk.Frame(root)
     n = math.floor(lifeScale)
     m = math.floor(lifeScale * 3 / 4)
-    s = str(n * 10) + "x" + str(m * 10)
+    s = str(n * cellSize) + "x" + str(m * cellSize)
     root.geometry(s)
     canv = tk.Canvas(root, bg='pink')
     canv.pack(fill=tk.BOTH, expand=1)
@@ -166,18 +198,25 @@ filemenu.add_command(label="Exit", command=rootMenu.quit)
 menubar.add_cascade(label="File", menu=filemenu)
 #lifeScale
 editmenu = Menu(menubar, tearoff=0)
-editmenu.add_command(label="200", command=Scale(200))
-editmenu.add_command(label="100", command=Scale(100))
-editmenu.add_command(label="50", command=Scale(50))
+editmenu.add_command(label="200", command=Scale200)
+editmenu.add_command(label="100", command=Scale100)
+editmenu.add_command(label="50", command=Scale50)
 menubar.add_cascade(label="lifeScale", menu=editmenu)
 #lifeSpeed
 editmenu = Menu(menubar, tearoff=0)
-editmenu.add_command(label="1", command=Speed(1))
-editmenu.add_command(label="2", command=Speed(2))
-editmenu.add_command(label="3", command=Speed(3))
+editmenu.add_command(label="1", command=Speed1)
+editmenu.add_command(label="5", command=Speed2)
+editmenu.add_command(label="10", command=Speed3)
 menubar.add_cascade(label="lifeSpeed", menu=editmenu)
+#cellSize
+editmenu = Menu(menubar, tearoff=0)
+editmenu.add_command(label="10", command=cellSize10)
+editmenu.add_command(label="15", command=cellSize15)
+editmenu.add_command(label="20", command=cellSize20)
+menubar.add_cascade(label="cellSize", menu=editmenu)
+
 #Play
-editmenu = Menu(menubar, tearoff=5)
+editmenu = Menu(menubar, tearoff=0)
 menubar.add_command(label="Play",command=Start)
 # display the menu
 rootMenu.config(menu=menubar)
