@@ -21,37 +21,62 @@ def Speed(n):
 n = 0
 m = 0
 mass1 = [[0 for j in range(m)] for i in range(n)]
-mass2 = [[0 for j in range(m)] for j in range(n)]
+mass2 = [[0 for j in range(m)] for i in range(n)]
 
 def CellUpdate():
-    global n,m,generationCounter
+    global n,m,generationCounter,mass1,mass2
     for i in range(n):
         for j in range(m):
 
-            cell = mass1[i][j]
-            neidgboursAlive=0
+            if mass1[i][j]==1:
+                print(i,' ',j)
+
+
 
             #считаем живых соседей
-            if mass1[(n + i - 1) % n][j] == 1:
+            neidgboursAlive = 0
+
+            k = (n + i - 1) % n
+            if mass1[k][j] == 1:
                 neidgboursAlive+=1
-            if mass1[(n + i + 1) % n][j] == 1:
+
+            k = (n + i + 1) % n
+            if mass1[k][j] == 1:
                 neidgboursAlive += 1
-            if mass1[(n + i - 1) % n][(m + j - 1) % m] == 1:
+
+            k = (n + i - 1) % n
+            l = (m + j - 1) % m
+            if mass1[k][l] == 1:
                 neidgboursAlive += 1
-            if mass1[(n + i - 1) % n][(m + j + 1) % m] == 1:
+
+            k = (n + i - 1) % n
+            l = (m + j + 1) % m
+            if mass1[k][l] == 1:
                 neidgboursAlive += 1
-            if mass1[(n + i + 1) % n][(m + j - 1) % m] == 1:
+
+            k = (n + i + 1) % n
+            l = (m + j - 1) % m
+            if mass1[k][l] == 1:
                 neidgboursAlive += 1
-            if mass1[(n + i + 1) % n][(m + j + 1) % m] == 1:
+
+            k = (n + i + 1) % n
+            l = (m + j + 1) % m
+            if mass1[k][l] == 1:
                 neidgboursAlive += 1
-            if mass1[i][(m + j - 1) % m] == 1:
+
+            l = (m + j - 1) % m
+            if mass1[i][l] == 1:
                 neidgboursAlive += 1
-            if mass1[i][(m + j + 1) % m] == 1:
+
+            l = (m + j + 1) % m
+            if mass1[i][l] == 1:
                 neidgboursAlive += 1
+
             if neidgboursAlive>0:
-                print(neidgboursAlive)
+                print(neidgboursAlive,' ', i,' ', j, ' ', "neidgbours:",'(',i-1, ',',j,')',mass1[i-1][j],' ','(',i+1, ',',j,')',mass1[i+1][j],' ','(',i-1, ',',j-1,')',mass1[i-1][j-1],' ','(',i-1, ',',j+1,')',mass1[i-1][j+1],' ','(',i+1, ',',j-1,')',mass1[i+1][j-1],' ','(',i+1, ',',j+1,')',mass1[i+1][j+1],' ','(',i, ',',j-1,')',mass1[i][j-1],' ','(',i, ',',j+1,')',mass1[i][j+1],' ' )
+
             #считаем следующее поколение в соответствии с правилами
-            if cell == 1:
+            if mass1[i][j] == 1:
                 if neidgboursAlive == 2 or neidgboursAlive == 3 :
                     mass2[i][j] = 1
                 else:
@@ -75,6 +100,7 @@ def Filling():
 
 #перекрашиваем клетку на которую тыкнули
 def MouceClick(event):
+    global mass2
     x = math.floor(event.x / 10)
     y = math.floor(event.y / 10)
     print(x,y)
@@ -90,14 +116,20 @@ def CheckButtons():
     root.bind('<1>',MouceClick)
     root.bind('<space>',TimeShift)
 
+def MassEqual():
+    global mass1, mass2
+    for i in range(n):
+        for j in range(m):
+            mass1[i][j] = mass2[i][j]
+
 def Update():
     global generationCounter, ifTime, mass2, mass1
 #    print(generationCounter)
+    CheckButtons()
     if ifTime:
         CellUpdate()
-    CheckButtons()
     Filling()
-    mass1 = mass2
+    MassEqual()
     root.after(100,Update)
 
 def Start():
