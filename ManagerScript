@@ -40,15 +40,15 @@ def Scale50():
 
 def Speed1():
     global lifeSpeed
-    lifeSpeed = 1
+    lifeSpeed = 20
 
 def Speed2():
     global lifeSpeed
-    lifeSpeed = 5
+    lifeSpeed = 100
 
 def Speed3():
     global lifeSpeed
-    lifeSpeed = 10
+    lifeSpeed = 200
 
 n = 0
 m = 0
@@ -125,10 +125,11 @@ def Filling():
     global cellSize
     for j in range(0, m):
         for i in range(0, n):
-            if mass2[i][j] == 0:
-                canv.create_rectangle(i * cellSize, j * cellSize, (i + 1) * cellSize, (j + 1) * cellSize, fill='Black', outline='Pink')
-            else:
-                canv.create_rectangle(i * cellSize, j * cellSize, (i + 1) * cellSize, (j + 1) * cellSize, fill='White', outline='Pink')
+            if(mass1[i][j]!=mass2[i][j] ):
+                if mass2[i][j] == 0:
+                    canv.create_rectangle(i * cellSize, j * cellSize, (i + 1) * cellSize, (j + 1) * cellSize, fill='Black', outline='Pink')
+                else:
+                    canv.create_rectangle(i * cellSize, j * cellSize, (i + 1) * cellSize, (j + 1) * cellSize, fill='White', outline='Pink')
 
 #перекрашиваем клетку на которую тыкнули
 def MouceClick(event):
@@ -162,7 +163,7 @@ def Update():
         CellUpdate()
     Filling()
     MassEqual()
-    root.after(1,Update)
+    root.after(lifeSpeed,Update)
 
 def Start():
     global root,canv,lifeScale,ifTime,generationCounter,n,m,mass1,mass2,cellSize
@@ -177,7 +178,7 @@ def Start():
 
     # заполняем 0-ми массивы
 
-    mass1 = [[0 for j in range(m)] for i in range(n)]
+    mass1 = [[1 for j in range(m)] for i in range(n)]
     mass2 = [[0 for j in range(m)] for j in range(n)]
     print(lifeScale) #масштаб
     print(lifeSpeed) #скорость
@@ -204,9 +205,9 @@ editmenu.add_command(label="50", command=Scale50)
 menubar.add_cascade(label="lifeScale", menu=editmenu)
 #lifeSpeed
 editmenu = Menu(menubar, tearoff=0)
-editmenu.add_command(label="1", command=Speed1)
-editmenu.add_command(label="5", command=Speed2)
-editmenu.add_command(label="10", command=Speed3)
+editmenu.add_command(label="20", command=Speed1)
+editmenu.add_command(label="100", command=Speed2)
+editmenu.add_command(label="200", command=Speed3)
 menubar.add_cascade(label="lifeSpeed", menu=editmenu)
 #cellSize
 editmenu = Menu(menubar, tearoff=0)
