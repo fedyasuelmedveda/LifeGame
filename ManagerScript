@@ -9,9 +9,10 @@ import time
 from tkinter import *
 rootMenu = Tk()
 #commands нужно добавить другие
-lifeScale = 0
-lifeSpeed = 0
-cellSize = 10
+lifeScale = 50
+lifeSpeed = 200
+cellSize = 20
+preset ="empty"
 
 def cellSize10():
     global cellSize
@@ -50,19 +51,29 @@ def Speed3():
     global lifeSpeed
     lifeSpeed = 200
 
+def Glider():
+    global preset
+    preset = "glider"
+
+def Clock():
+    global preset
+    preset = "clock"
+def Vline():
+    global  preset
+    preset = "vline"
+def Hline():
+    global preset
+    preset = "hline"
 n = 0
 m = 0
 mass1 = [[0 for j in range(m)] for i in range(n)]
 mass2 = [[0 for j in range(m)] for i in range(n)]
 
+
 def CellUpdate():
     global n,m,generationCounter,mass1,mass2
     for i in range(n):
         for j in range(m):
-
-            if mass1[i][j]==1:
-                print(i,' ',j)
-
 
 
             #считаем живых соседей
@@ -104,8 +115,6 @@ def CellUpdate():
             if mass1[i][l] == 1:
                 neidgboursAlive += 1
 
-            if neidgboursAlive>0:
-                print(neidgboursAlive,' ', i,' ', j, ' ', "neidgbours:",'(',i-1, ',',j,')',mass1[i-1][j],' ','(',i+1, ',',j,')',mass1[i+1][j],' ','(',i-1, ',',j-1,')',mass1[i-1][j-1],' ','(',i-1, ',',j+1,')',mass1[i-1][j+1],' ','(',i+1, ',',j-1,')',mass1[i+1][j-1],' ','(',i+1, ',',j+1,')',mass1[i+1][j+1],' ','(',i, ',',j-1,')',mass1[i][j-1],' ','(',i, ',',j+1,')',mass1[i][j+1],' ' )
 
             #считаем следующее поколение в соответствии с правилами
             if mass1[i][j] == 1:
@@ -121,11 +130,11 @@ def CellUpdate():
 
     generationCounter += 1
 
-def Filling():
+def Filling(gen):
     global cellSize
     for j in range(0, m):
         for i in range(0, n):
-            if(mass1[i][j]!=mass2[i][j] ):
+            if(mass1[i][j]!=mass2[i][j] or gen ==0):
                 if mass2[i][j] == 0:
                     canv.create_rectangle(i * cellSize, j * cellSize, (i + 1) * cellSize, (j + 1) * cellSize, fill='Black', outline='Pink')
                 else:
@@ -155,18 +164,56 @@ def MassEqual():
         for j in range(m):
             mass1[i][j] = mass2[i][j]
 
+def DrawVerticalLine(i,j,mass2,l):
+    for k in range(l):
+        mass2[i][j+k]=(mass2[i][j+k]+1)%2
+
+def DrawHorizontalLine(i,j,mass2,l):
+    for k in range(l):
+        mass2[i+k][j]=(mass2[i][j+k]+1)%2
+
+def DrawSquare(i, j, mass2):
+    mass2[i][j] = 1
+    mass2[i+1][j] = 1
+    mass2[i+1][j+1] = 1
+    mass2[i][j+1] = 1
+
+def DrawClocks(i,j,mass2):
+    DrawHorizontalLine(i - 1, j - 2, mass2, 4)
+    DrawHorizontalLine(i - 1, j + 3, mass2, 4)
+    DrawVerticalLine(i - 2, j - 1, mass2, 4)
+    DrawVerticalLine(i + 3, j - 1, mass2, 4)
+    DrawSquare(i + 1, j - 5, mass2)
+    DrawSquare(i - 1, j + 5, mass2)
+    DrawSquare(i + 5, j + 1, mass2)
+    DrawSquare(i - 5, j - 1, mass2)
+    mass2[i-1][j] = (mass2[i-1][j]+1)%2
+    mass2[i][j+1] = (mass2[i][j+1]+1)%2
+    mass2[i+1][j + 1] = (mass2[i+1][j + 1] + 1) % 2
+
+
+def DrawGlider(i,j,mass2):
+
+        mass2[i-1][j-1] = 1
+        mass2[i-1][j] = 1
+        mass2[i][j-1] = 1
+        mass2[i][j+1] = 1
+        mass2[i+1][j-1]=1
+
 def Update():
     global generationCounter, ifTime, mass2, mass1,lifeSpeed
 #    print(generationCounter)
     CheckButtons()
     if ifTime:
         CellUpdate()
-    Filling()
+    Filling(generationCounter)
     MassEqual()
+    generationCounter+=1
     root.after(lifeSpeed,Update)
 
 def Start():
-    global root,canv,lifeScale,ifTime,generationCounter,n,m,mass1,mass2,cellSize
+    global root, canv, lifeScale, ifTime, generationCounter, n, m, mass1, mass2, cellSize, preset
+    rootMenu.destroy()
     root = tk.Tk()
     #fr = tk.Frame(root)
     n = math.floor(lifeScale)
@@ -178,10 +225,19 @@ def Start():
 
     # заполняем 0-ми массивы
 
-    mass1 = [[1 for j in range(m)] for i in range(n)]
-    mass2 = [[0 for j in range(m)] for j in range(n)]
-    print(lifeScale) #масштаб
-    print(lifeSpeed) #скорость
+    mass1 = [[0 for j in range(m)] for i in range(n)]
+    mass2 = [[0 for j in range(m)] for i in range(n)]
+    if preset == "glider":
+        DrawGlider(math.floor(n/2), math.floor(m/2), mass2)
+    if preset == "clock":
+        DrawClocks(math.floor(n/2), math.floor(m/2), mass2)
+    if preset == "vline":
+        DrawVerticalLine(math.floor(n / 2), math.floor(m / 2)-5, mass2, 10)
+    if preset == "hline":
+        DrawHorizontalLine(math.floor(n/2)-5, math.floor(m/2), mass2, 10)
+
+    #print(lifeScale) #масштаб
+    #print(lifeSpeed) #скорость
     ifTime = 0 #остановка времени 0-если время стоит
     generationCounter = 0
     Update()
@@ -215,6 +271,13 @@ editmenu.add_command(label="10", command=cellSize10)
 editmenu.add_command(label="15", command=cellSize15)
 editmenu.add_command(label="20", command=cellSize20)
 menubar.add_cascade(label="cellSize", menu=editmenu)
+#preset
+editmenu = Menu(menubar, tearoff=0)
+editmenu.add_command(label="glider", command=Glider)
+editmenu.add_command(label="clock", command=Clock)
+editmenu.add_command(label="verticalLine", command=Vline)
+editmenu.add_command(label="horizontalLine", command=Hline)
+menubar.add_cascade(label="presets", menu=editmenu)
 
 #Play
 editmenu = Menu(menubar, tearoff=0)
