@@ -64,6 +64,9 @@ def Vline():
 def Hline():
     global preset
     preset = "hline"
+def Universe():
+    global preset
+    preset ="universe"
 n = 0
 m = 0
 mass1 = [[0 for j in range(m)] for i in range(n)]
@@ -200,6 +203,53 @@ def DrawGlider(i,j,mass2):
         mass2[i][j+1] = 1
         mass2[i+1][j-1]=1
 
+def DrawUniverse(i,j,mass2):
+
+    DrawSquare(i - 1, j - 2, mass2)
+    DrawSquare(i + 1, j - 1, mass2)
+    DrawSquare(i, j + 1, mass2)
+    DrawSquare(i - 2, j, mass2)
+
+    mass2[i - 1][j + 2] = (mass2[i - 1][j + 2] + 1) % 2
+    mass2[i - 2][j - 1] = (mass2[i - 2][j - 1] + 1) % 2
+    mass2[i + 2][j + 1] = (mass2[i + 2][j + 1] + 1) % 2
+    mass2[i + 1][j - 2] = (mass2[i + 1][j - 2] + 1) % 2
+
+
+    mass2[i - 1][j - 3] = (mass2[i - 1][j - 3] + 1) % 2
+    mass2[i - 2][j - 4] = (mass2[i - 2][j - 4] + 1) % 2
+    mass2[i - 3][j - 3] = (mass2[i - 3][j - 3] + 1) % 2
+    mass2[i - 3][j - 2] = (mass2[i - 3][j - 2] + 1) % 2
+
+    mass2[i + 3][j - 1] = (mass2[i + 3][j - 1] + 1) % 2
+    mass2[i + 4][j - 2] = (mass2[i + 4][j - 2] + 1) % 2
+    mass2[i + 3][j - 3] = (mass2[i + 3][j - 3] + 1) % 2
+    mass2[i + 2][j - 3] = (mass2[i + 2][j - 3] + 1) % 2
+
+    mass2[i - 3][j + 1] = (mass2[i - 3][j + 1] + 1) % 2
+    mass2[i - 4][j + 2] = (mass2[i - 4][j + 2] + 1) % 2
+    mass2[i - 3][j + 3] = (mass2[i - 3][j + 3] + 1) % 2
+    mass2[i - 2][j + 3] = (mass2[i - 2][j + 3] + 1) % 2
+
+    mass2[i + 1][j + 3] = (mass2[i + 1][j + 3] + 1) % 2
+    mass2[i + 3][j + 2] = (mass2[i + 3][j + 2] + 1) % 2
+    mass2[i + 3][j + 3] = (mass2[i + 3][j + 3] + 1) % 2
+    mass2[i + 2][j + 4] = (mass2[i + 2][j + 4] + 1) % 2
+
+
+    mass2[i - 5][j - 2] = (mass2[i - 5][j - 2] + 1) % 2
+    mass2[i - 5][j - 1] = (mass2[i - 5][j - 1] + 1) % 2
+
+    mass2[i + 5][j + 2] = (mass2[i + 5][j + 2] + 1) % 2
+    mass2[i + 5][j + 1] = (mass2[i + 5][j + 1] + 1) % 2
+
+    mass2[i + 1][j - 5] = (mass2[i + 1][j - 5] + 1) % 2
+    mass2[i + 2][j - 5] = (mass2[i + 2][j - 5] + 1) % 2
+
+    mass2[i - 1][j + 5] = (mass2[i - 1][j + 5] + 1) % 2
+    mass2[i - 2][j + 5] = (mass2[i - 2][j + 5] + 1) % 2
+
+
 def Update():
     global generationCounter, ifTime, mass2, mass1,lifeSpeed
 #    print(generationCounter)
@@ -235,6 +285,8 @@ def Start():
         DrawVerticalLine(math.floor(n / 2), math.floor(m / 2)-5, mass2, 10)
     if preset == "hline":
         DrawHorizontalLine(math.floor(n/2)-5, math.floor(m/2), mass2, 10)
+    if preset == "universe":
+        DrawUniverse(math.floor(n/2), math.floor(m/2), mass2)
 
     #print(lifeScale) #масштаб
     #print(lifeSpeed) #скорость
@@ -277,6 +329,7 @@ editmenu.add_command(label="glider", command=Glider)
 editmenu.add_command(label="clock", command=Clock)
 editmenu.add_command(label="verticalLine", command=Vline)
 editmenu.add_command(label="horizontalLine", command=Hline)
+editmenu.add_command(label="universe", command=Universe)
 menubar.add_cascade(label="presets", menu=editmenu)
 
 #Play
